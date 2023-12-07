@@ -34,7 +34,7 @@ positional arguments:
     - fe   : Forced Exposure Weekly Best Sellers
     - sd   : Stranded Recommended Records
     - wfmu : WFMU Weekly Charts
-    - am   : AllMusic Featured New Albums
+    # dis one dnt work yet - am   : AllMusic Featured New Albums
 
 optional arguments:
   -h, --help            Show this help message and exit
