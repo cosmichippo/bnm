@@ -3,12 +3,14 @@ import itertools
 import threading
 import time
 import sys
+import subprocess
 
 from termcolor import colored
 from fake_useragent import UserAgent
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
 
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -59,9 +61,11 @@ def initialize_webdriver():
     options.headless = True
     options.add_argument("--window-size=1920,1200")
     options.add_argument(f"--user-agent={ua.random}")
+    options.add_argument("--headless")
     driver = webdriver.Chrome(
-        options=options, executable_path=ChromeDriverManager(log_level=0).install()
+            options=options, service=ChromeService(ChromeDriverManager().install(), service_args = ['--log-level=OFF'], log_output = subprocess.STDOUT)
     )
+    # driver = webdriver.Chrome(ChromeDriverManager().install())
     return driver
 
 
@@ -69,6 +73,8 @@ def render_html(url, driver):
     agent = {"userAgent": ua.random}  # randomize user-agent
     driver.execute_cdp_cmd("Network.setUserAgentOverride", agent)
     driver.get(url)
+    # with open('/Users/juan/Programming/tinker/Test.txt', "w") as file:
+    #    file.write(driver.page_source)
     return driver.page_source
 
 

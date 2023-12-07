@@ -347,7 +347,7 @@ def pitchfork(n_pages=2, oldest_first=False, n_items=None):
     print("{} = Best New Reissue".format(colored("**", "red", attrs=["bold"])))
 
 
-def resident_advisor(oldest_first=False, n_items=None):
+def resident_advisor(oldest_first=False, n_items = None):  # note that the R.A. gives 10 items every month
     header = """
        __    _       __                                                   _
       /__\  /_\     /__\ ___  ___ ___  _ __ ___  _ __ ___   ___ _ __   __| |___
@@ -356,14 +356,14 @@ def resident_advisor(oldest_first=False, n_items=None):
     \/ \_/\_/ \_/ \/ \_/\___|\___\___/|_| |_| |_|_| |_| |_|\___|_| |_|\__,_|___/
     ---------------------------------------------------------------------------
     """
-    driver = Animate(initialize_webdriver, "Initializing webdriver...")()
     print(header)
+    driver = Animate(initialize_webdriver, "Initializing webdriver...")()
 
     url = "https://ra.co/reviews/recommends"
     html = Animate(partial(render_html, url, driver), "", trailing_newline=True)()
     soup = BeautifulSoup(html, "html.parser")
     reviews = soup.find("main", {"data-tracking-id": "reviews-archive"}).find_all(
-        "li", class_="Column-sc-18hsrnn-0 iBzIXi"
+        "div", class_="Box-omzyfs-0 hjinuo"
     )
 
     if oldest_first:
@@ -373,6 +373,7 @@ def resident_advisor(oldest_first=False, n_items=None):
     label_regex = re.compile("^/labels/")
 
     for ix, record in enumerate(reviews):
+        # print(n_items)
         if n_items and ix == n_items:
             break
 
@@ -380,21 +381,22 @@ def resident_advisor(oldest_first=False, n_items=None):
             time.sleep(SLEEP_BTWN_ITEMS)
 
         tattr = {"data-tracking-id": title_regex}
-        title = try_except(lambda: record.find("span", tattr).text.strip(), "album")
+        title = try_except(lambda: record.find("h3").text.strip(), "album")
         artist, album = ("Unknown artist", "Unknown album")
-
+        # print(tattr)
         if "Unknown album" not in title:
             try:
                 artist, album = SPACE_HYPHEN_SPACE.split(title, 1)
             except ValueError:
                 artist, album = HYPHEN_SPACE.split(title, 1)
 
-        get_rpath = lambda: record.find("span", tattr).attrs["href"]
-        create_link = lambda: f"https://ra.co{get_rpath()}"
+        get_rpath = lambda: record.find( href = re.compile('/reviews')).attrs["href"]
+        create_link = lambda: f"{get_rpath()}"
         link = try_except(lambda: create_link(), "link")
+        
 
         lattr = {"data-tracking-id": label_regex}
-        label = try_except(lambda: record.find("span", lattr).text.strip(), "label")
+        label = try_except(lambda: record.find(href = re.compile('/labels')).text.strip(), "label")
         lede = try_except(
             lambda: record.find("span", class_="kyXmTt").text.strip(), "review"
         )
