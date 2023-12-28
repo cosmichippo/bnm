@@ -16,10 +16,7 @@ View recent highly rated albums in the terminal.
 - [AllMusic Featured New Albums](https://www.allmusic.com/newreleases)
 
 ## Installation
-Install with pip:
-```
-pip install bestnewmusic
-```
+clone repository, run makefile
 
 ## Usage
 ```
